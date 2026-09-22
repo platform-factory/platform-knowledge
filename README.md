@@ -1,6 +1,6 @@
 # platform-knowledge
 
-This repo is the knowledge-as-code layer for the Platform Factory: skills/, adr/ (architecture decision records), standards/, and questions/, each entry born via pull request and owned via CODEOWNERS.
+Knowledge gets the same lifecycle as code: born via pull request, owned via CODEOWNERS, and living in the repo whose approval boundary covers what it describes. This repo **will** be the central part of that layer for the Platform Factory — `skills/`, `adr/` (architecture decision records), `standards/` and `questions/`. **Today it is an empty scaffold**: none of those folders exist yet. Until they do, the pattern's own decision records are the working example, in the design seed's [`docs/adr/`](https://github.com/platform-factory/platform-factory-concept/tree/main/docs/adr).
 
 ## Part of the Platform Factory
 
