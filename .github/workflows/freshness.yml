@@ -1,0 +1,42 @@
+# The freshness check (ADR-0024 §13, C-22).
+#
+# Why: a skill that describes another repository goes stale when that
+# repository changes, and nothing tells the agent. Each skill's front matter
+# declares the files it depends on and the commit it was verified at; this
+# job reads each declared file at the dependent repository's `main` through
+# the API and fails when it differs from the verified commit (see
+# .github/freshness/freshness.py). It also fails when it cannot read a file,
+# so a broken check never reads as a fresh skill.
+#
+# It runs once a day and by hand. The readiness note's true positive is a
+# dispatched run after svc-hello's go-test pull request changes
+# validate.yml; its true negative is a dispatched run while main's tip is
+# the first class bump, which changes only go.mod and go.sum.
+name: freshness
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  freshness:
+    name: freshness
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read    # this repository; the dependent repositories are public reads
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: unit tests of the check
+        run: python3 -m unittest discover -s .github/freshness
+
+      - name: freshness
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/freshness/freshness.py
